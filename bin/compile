@@ -17,6 +17,9 @@ export_env_dir() {
 export_env_dir $3
 
 SLACK_MESSAGE="*$HEROKU_APP_NAME* was deployed"
+AUTHOR="Deploy"
+COLOR_GREEN="#36a64f"
+COLOR_RED="#e01e5a"
 
 if [[ -z "${DEPLOY_NOTIFY_GITHUB_AUTH_TOKEN}" || -z "${DEPLOY_NOTIFY_GITHUB_ORG}" || -z "${DEPLOY_NOTIFY_GITHUB_PROJECT}" ]]; then
   # Not loading Github Data
@@ -34,8 +37,14 @@ else
   SLACK_MESSAGE="*$HEROKU_APP_NAME* was deployed\n>$AUTHOR_NAME - $AUTHOR_EMAIL\n\n\`\`\`\n$COMMIT_MESSAGE\n\`\`\`\n$COMMIT_URL"
 fi
 
+echo "-------------------------"
+echo "SLACK_DEPLOYMENT_CHANNEL = $SLACK_DEPLOYMENT_CHANNEL"
+echo "SLACK_DEPLOYMENT_WEBHOOK_URL = $SLACK_DEPLOYMENT_WEBHOOK_URL"
+echo "-------------------------"
+
 echo "-----> Notifying Slack that the deploy is complete"
 echo "       $SLACK_MESSAGE"
-curl -s -X POST -H 'Content-type: application/json' --data "{\"text\":\"$SLACK_MESSAGE\", \"channel\":\"$SLACK_DEPLOYMENT_CHANNEL\"}" $SLACK_DEPLOYMENT_WEBHOOK_URL
+curl -s -X POST -H 'Content-type: application/json' --data "{\"attachments\":[{\"text\":\"$SLACK_MESSAGE\", \"color\":\"$COLOR_GREEN\", \"author_name\":\"Deploy\"}]}" $SLACK_DEPLOYMENT_WEBHOOK_URL
+#curl -s -X POST -H 'Content-type: application/json' --data "{\"text\":\"$SLACK_MESSAGE\", \"channel\":\"$SLACK_DEPLOYMENT_CHANNEL\"}" $SLACK_DEPLOYMENT_WEBHOOK_URL
 echo ""
 echo ""
